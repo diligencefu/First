@@ -1,7 +1,47 @@
 # First
 
-两年前写的一个故事软件里面的选择器，闲着没什么事，就给传上去玩玩。
+两年前写的一个古诗软件里面的选择器，闲着没什么事，就给传上去玩玩。
 
+Controller类里面没什么东西，就是根据view选择的内容，加载不同的数据，然后就是改变需要显示列表的View的frame的变化。
+    _headView=[[SXSearchHeadView alloc]initWithFrame:CGRectMake(0, 0,ScreenWidth, 40*almightyHeight) andDataSource:Arr];
+    __weak SXMainViewController *vc=self;
+    
+    //接受点击button时的下标
+    _headView.titleBlock=^(NSInteger index){
+        [vc showOrHiddenWhenTheValueChanged:index];
+    };
+    
+    //接收点击cell时的消息
+    //当headView的cell被点击时，收回tableView
+    __weak SXSearchHeadView *view=_headView;
+    
+    _headView.selectBlock=^(NSString *str){
+        [UIView animateWithDuration:.6 animations:^{
+            float height=40*almightyHeight;
+            
+            CGRect rect=view.frame;
+            
+            rect.size.height=height;
+            
+            view.frame=rect;
+            
+        }];
+        
+        [vc showInfoWithDynasty:view.dynastyButton.currentTitle andPeomType:view.dataButton.currentTitle andForm:view.formButton.currentTitle];
+    };
+    
+    [self.view addSubview:_headView];
+}
+
+//选择完成之后调用
+- (void)showInfoWithDynasty:(NSString *)dynasty andPeomType:(NSString *)type andForm:(NSString *)form{
+
+    self.navigationItem.title = [NSString stringWithFormat:@"%@%@的%@",dynasty,type,form];
+    
+}
+
+
+主要的东西还是在view类里面。
 //开始选择
 -(void)beginToSearch:(UIButton *)sender{
     
